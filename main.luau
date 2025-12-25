@@ -13,7 +13,7 @@ local included_classnames = {
     ["Script"]        = ".server.luau",
     ["ServerScript"]  = ".server.luau",
     ["LocalScript"]   = ".client.luau",
-    ["ModuleScript"]  = ".module.luau",
+    ["ModuleScript"]  = ".luau",
 }
 --
 -- LOCAL FUNCTIONS
