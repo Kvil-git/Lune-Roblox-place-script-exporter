@@ -136,24 +136,32 @@ local function Convert_Xml_Value_To_Json(element_type: string, inner_xml: string
     elseif (element_type == "token") then
         return inner_xml
     elseif (element_type == "Color3") then
-        local nums = Split_Numbers(inner_xml)
-        return nums  -- [r, g, b]
+        -- XML: <Color3><R>0.3137</R><G>0.3137</G><B>0.3137</B></Color3>
+        local r, g, b = string.match(inner_xml, "<R>(.-)</R>%s*<G>(.-)</G>%s*<B>(.-)</B>")
+        return { tonumber(r), tonumber(g), tonumber(b) }
     elseif (element_type == "BrickColor") then
         return tonumber(inner_xml)
     elseif (element_type == "UDim2") then
-        local s1, o1, s2, o2 = string.match(inner_xml, "<S>(.-)</S><O>(.-)</O>%s*<S>(.-)</S><O>(.-)</O>")
+        -- XML: <UDim2><XS>0</XS><XO>0</XO><YS>0</YS><YO>0</YO></UDim2>
+        local xs, xo, ys, yo = string.match(inner_xml, "<XS>(.-)</XS>%s*<XO>(.-)</XO>%s*<YS>(.-)</YS>%s*<YO>(.-)</YO>")
         return {
-            { tonumber(s1), tonumber(o1) },
-            { tonumber(s2), tonumber(o2) },
+            { tonumber(xs), tonumber(xo) },
+            { tonumber(ys), tonumber(yo) },
         }
     elseif (element_type == "UDim") then
-        local s, o = string.match(inner_xml, "<S>(.-)</S><O>(.-)</O>")
+        -- XML: <UDim><S>0</S><O>0</O></UDim>
+        local s, o = string.match(inner_xml, "<S>(.-)</S>%s*<O>(.-)</O>")
         return { tonumber(s), tonumber(o) }
     elseif (element_type == "Vector3") then
-        return Split_Numbers(inner_xml)  -- [x, y, z]
+        -- XML: <Vector3><X>1</X><Y>2</Y><Z>3</Z></Vector3>
+        local x, y, z = string.match(inner_xml, "<X>(.-)</X>%s*<Y>(.-)</Y>%s*<Z>(.-)</Z>")
+        return { tonumber(x), tonumber(y), tonumber(z) }
     elseif (element_type == "Vector2") then
-        return Split_Numbers(inner_xml)  -- [x, y]
+        -- XML: <Vector2><X>1</X><Y>2</Y></Vector2>
+        local x, y = string.match(inner_xml, "<X>(.-)</X>%s*<Y>(.-)</Y>")
+        return { tonumber(x), tonumber(y) }
     elseif (element_type == "CFrame") then
+        -- XML: <CFrame>0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1</CFrame> (or nested, but typical is comma-separated)
         return Split_Numbers(inner_xml)  -- 12 numbers
     else
         -- For any unknown type, fall back to the raw text.
