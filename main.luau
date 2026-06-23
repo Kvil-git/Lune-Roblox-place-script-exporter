@@ -2,13 +2,17 @@
 --
 -- REQUIRES
 --
-local roblox = require("@lune/roblox")
+local stdio  = require("@lune/stdio")
 local fs     = require("@lune/fs")
+local roblox = require("@lune/roblox")
 --
 -- CONSTANTS
 --
-local input_file_path = "./ClashOfEmpires.rbxl"  -- !!!!! YOU WANT TO CHANGE THIS !!!!!
-local output_folder   = `./{input_file_path:sub(1, -6)}/scripts`
+local PLACE_FILE: string = stdio.prompt(
+    "text",
+    "Input the place file name to deserialize. It should be stored in the same directory as this script."
+)
+local output_folder   = `./scripts`
 local included_classnames = {
     ["Script"]        = ".server.luau",
     ["ServerScript"]  = ".server.luau",
@@ -106,7 +110,7 @@ end
 --
 -- MODULE OPERATION
 --
-local place_contents = fs.readFile(input_file_path)
+local place_contents = fs.readFile(PLACE_FILE)
 local place          = roblox.deserializePlace(place_contents)
 for key, descendant in place:GetDescendants() do
      --
